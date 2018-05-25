@@ -9,7 +9,7 @@ export default class KissanimeHomePage {
 
   public getRandom() {
     const elem = this.document.querySelector("#divRandomAnime");
-    const linkElem = elem.querySelector("a#aRandomAnimeResult");
+    const linkElem = elem.querySelector("#aRandomAnimeResult");
     const titleElem = elem.querySelector("h2");
     const imgElem = elem.querySelector("img");
     return {
