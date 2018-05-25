@@ -6358,7 +6358,7 @@ var KissanimeHomePage = (function () {
     }
     KissanimeHomePage.prototype.getRandom = function () {
         var elem = this.document.querySelector("#divRandomAnime");
-        var linkElem = elem.querySelector("a#aRandomAnimeResult");
+        var linkElem = elem.querySelector("#aRandomAnimeResult");
         var titleElem = elem.querySelector("h2");
         var imgElem = elem.querySelector("img");
         return {
