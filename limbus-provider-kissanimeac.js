@@ -6605,8 +6605,15 @@ var KissanimeHttpClient = (function () {
         if (timesChallenged === void 0) { timesChallenged = 0; }
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
+            var cacheKey, axiosReq;
             return __generator(this, function (_a) {
-                return [2, this.http.request(req)
+                cacheKey = [JSON.stringify(req), timesChallenged].join(":");
+                axiosReq = this.cache.get(cacheKey);
+                if (!axiosReq) {
+                    axiosReq = this.http.request(req);
+                    this.cache.set(cacheKey, axiosReq);
+                }
+                return [2, axiosReq
                         .then(function (res) { return res.data; })
                         .catch(function (e) {
                         if (e.response.status === 503 &&
@@ -6617,10 +6624,12 @@ var KissanimeHttpClient = (function () {
                                 .then(function () { return _this.request({ url: page_1.getChallengeSolutionUrl() }, timesChallenged + 1); });
                         }
                         else if (timesChallenged >= 5) {
+                            _this.cache.delete(cacheKey);
                             var err = new Error("Cloudflare challenge was not properly resolved after 5 attempts.");
                             return Promise.reject(err);
                         }
                         else {
+                            _this.cache.delete(cacheKey);
                             return Promise.reject(e);
                         }
                     })];
