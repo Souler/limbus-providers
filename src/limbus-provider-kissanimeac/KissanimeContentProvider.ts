@@ -18,7 +18,7 @@ import {
 import { chunk, httpClient } from "./utils";
 
 const KISSANIME_HOME_URL = "https://kissanime.ac/kissanime.html";
-const KISSANIME_SEARCH_URL = "https://kissanime.ac/Search";
+const KISSANIME_SEARCH_URL = "https://kissanime.ac/AdvanceSearch";
 
 export default class KissanimeContentProvider implements IContentProvider {
   public readonly name = "KissanimeacContentProvider";
@@ -104,7 +104,7 @@ export default class KissanimeContentProvider implements IContentProvider {
 
   private async getSearchPage(term: string) {
     const url = URL.parse(KISSANIME_SEARCH_URL, true);
-    url.query = { s: term };
+    url.query = { genre: "", name: term, status: "" };
     const reqUrl = URL.format(url);
     const content = await httpClient.request({ url: reqUrl });
     return new KissanimeSearchPage(content);
