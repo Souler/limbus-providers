@@ -20,6 +20,6 @@
   },
   "scripts": {
     "build": "webpack",
-    "start:dev": "webpack-dev-server --port 8081 --host 0.0.0.0 --inline=false"
+    "start:dev": "webpack-dev-server --port 8085 --host 0.0.0.0 --inline=false"
   }
 }
