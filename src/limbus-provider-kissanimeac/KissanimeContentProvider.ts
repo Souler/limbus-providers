@@ -22,6 +22,7 @@ const KISSANIME_SEARCH_URL = "https://kissanime.ac/AdvanceSearch";
 
 export default class KissanimeContentProvider implements IContentProvider {
   public readonly name = "KissanimeacContentProvider";
+  private homePage: Promise<KissanimeHomePage> = null;
 
   public async getFeatured(): Promise<IFeaturedShowSection[]> {
     const page = await this.getHomePage();
@@ -92,9 +93,12 @@ export default class KissanimeContentProvider implements IContentProvider {
     return Promise.resolve([{ url: episodeId, desc: "" }]);
   }
 
-  private async getHomePage(): Promise<KissanimeHomePage> {
-    const content = await httpClient.request({ url: KISSANIME_HOME_URL });
-    return new KissanimeHomePage(content);
+  private getHomePage(): Promise<KissanimeHomePage> {
+    if (!this.homePage) {
+      this.homePage = httpClient.request({ url: KISSANIME_HOME_URL })
+        .then((content) => new KissanimeHomePage(content));
+    }
+    return this.homePage;
   }
 
   private async getSeriesPage(id: string) {
