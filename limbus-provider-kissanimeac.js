@@ -5999,10 +5999,11 @@ var URL = __webpack_require__(/*! url */ "./node_modules/url/url.js");
 var pages_1 = __webpack_require__(/*! ./pages */ "./src/limbus-provider-kissanimeac/pages/index.ts");
 var utils_1 = __webpack_require__(/*! ./utils */ "./src/limbus-provider-kissanimeac/utils/index.ts");
 var KISSANIME_HOME_URL = "https://kissanime.ac/kissanime.html";
-var KISSANIME_SEARCH_URL = "https://kissanime.ac/Search";
+var KISSANIME_SEARCH_URL = "https://kissanime.ac/AdvanceSearch";
 var KissanimeContentProvider = (function () {
     function KissanimeContentProvider() {
         this.name = "KissanimeacContentProvider";
+        this.homePage = null;
     }
     KissanimeContentProvider.prototype.getFeatured = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -6117,17 +6118,11 @@ var KissanimeContentProvider = (function () {
         });
     };
     KissanimeContentProvider.prototype.getHomePage = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var content;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, utils_1.httpClient.request({ url: KISSANIME_HOME_URL })];
-                    case 1:
-                        content = _a.sent();
-                        return [2, new pages_1.KissanimeHomePage(content)];
-                }
-            });
-        });
+        if (!this.homePage) {
+            this.homePage = utils_1.httpClient.request({ url: KISSANIME_HOME_URL })
+                .then(function (content) { return new pages_1.KissanimeHomePage(content); });
+        }
+        return this.homePage;
     };
     KissanimeContentProvider.prototype.getSeriesPage = function (id) {
         return __awaiter(this, void 0, void 0, function () {
@@ -6149,7 +6144,7 @@ var KissanimeContentProvider = (function () {
                 switch (_a.label) {
                     case 0:
                         url = URL.parse(KISSANIME_SEARCH_URL, true);
-                        url.query = { s: term };
+                        url.query = { genre: "", name: term, status: "" };
                         reqUrl = URL.format(url);
                         return [4, utils_1.httpClient.request({ url: reqUrl })];
                     case 1:
@@ -6598,22 +6593,14 @@ var pages_1 = __webpack_require__(/*! ../pages */ "./src/limbus-provider-kissani
 var delay_1 = __webpack_require__(/*! ./delay */ "./src/limbus-provider-kissanimeac/utils/delay.ts");
 var KissanimeHttpClient = (function () {
     function KissanimeHttpClient() {
-        this.cache = new Map();
         this.http = axios_1.default.create({ withCredentials: true });
     }
     KissanimeHttpClient.prototype.request = function (req, timesChallenged) {
         if (timesChallenged === void 0) { timesChallenged = 0; }
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var cacheKey, axiosReq;
             return __generator(this, function (_a) {
-                cacheKey = [JSON.stringify(req), timesChallenged].join(":");
-                axiosReq = this.cache.get(cacheKey);
-                if (!axiosReq) {
-                    axiosReq = this.http.request(req);
-                    this.cache.set(cacheKey, axiosReq);
-                }
-                return [2, axiosReq
+                return [2, this.http.request(req)
                         .then(function (res) { return res.data; })
                         .catch(function (e) {
                         if (e.response.status === 503 &&
@@ -6621,15 +6608,14 @@ var KissanimeHttpClient = (function () {
                             timesChallenged < 5) {
                             var page_1 = new pages_1.KissanimeCloudflareDdosPage(e.response.data, req.url);
                             return delay_1.default(page_1.getChallengeDelay())
-                                .then(function () { return _this.request({ url: page_1.getChallengeSolutionUrl() }, timesChallenged + 1); });
+                                .then(function () { return _this.request({ url: page_1.getChallengeSolutionUrl() }, timesChallenged + 1); })
+                                .then(function () { return _this.request(req, timesChallenged); });
                         }
                         else if (timesChallenged >= 5) {
-                            _this.cache.delete(cacheKey);
                             var err = new Error("Cloudflare challenge was not properly resolved after 5 attempts.");
                             return Promise.reject(err);
                         }
                         else {
-                            _this.cache.delete(cacheKey);
                             return Promise.reject(e);
                         }
                     })];
