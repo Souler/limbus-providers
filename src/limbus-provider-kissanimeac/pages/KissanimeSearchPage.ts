@@ -1,10 +1,13 @@
 import * as HTMLParser from "fast-html-parser";
+import * as URL from "url";
 
 export default class KissanimeSearchPage {
   private document: HTMLParser.IFastHTMLElement;
+  private url: string;
 
-  constructor(body: string) {
+  constructor(body: string, url: string) {
     this.document = HTMLParser.parse(body);
+    this.url = url;
   }
 
   public getSearchTerm() {
@@ -22,7 +25,7 @@ export default class KissanimeSearchPage {
         // This is an error of the parsing library, src shouldn't be an attibute of the div
         poster: posterContainer.attributes.src,
         title: titleLink.text,
-        url: titleLink.attributes.href,
+        url: URL.resolve(this.url, titleLink.attributes.href),
       };
     });
   }

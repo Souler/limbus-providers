@@ -111,7 +111,7 @@ export default class KissanimeContentProvider implements IContentProvider {
     url.query = { genre: "", name: term, status: "" };
     const reqUrl = URL.format(url);
     const content = await httpClient.request({ url: reqUrl });
-    return new KissanimeSearchPage(content);
+    return new KissanimeSearchPage(content, reqUrl);
   }
 
   private generateEpisodeGroups(page: KissanimeSeriesPage):
