@@ -6149,7 +6149,7 @@ var KissanimeContentProvider = (function () {
                         return [4, utils_1.httpClient.request({ url: reqUrl })];
                     case 1:
                         content = _a.sent();
-                        return [2, new pages_1.KissanimeSearchPage(content)];
+                        return [2, new pages_1.KissanimeSearchPage(content, reqUrl)];
                 }
             });
         });
@@ -6398,9 +6398,11 @@ exports.default = KissanimeHomePage;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTMLParser = __webpack_require__(/*! fast-html-parser */ "./node_modules/fast-html-parser/index.js");
+var URL = __webpack_require__(/*! url */ "./node_modules/url/url.js");
 var KissanimeSearchPage = (function () {
-    function KissanimeSearchPage(body) {
+    function KissanimeSearchPage(body, url) {
         this.document = HTMLParser.parse(body);
+        this.url = url;
     }
     KissanimeSearchPage.prototype.getSearchTerm = function () {
         var searchTerm = this.document.querySelector("h1 strong");
@@ -6409,13 +6411,14 @@ var KissanimeSearchPage = (function () {
         return term;
     };
     KissanimeSearchPage.prototype.getResults = function () {
+        var _this = this;
         return this.document.querySelectorAll(".item_movies_in_cat").map(function (elem) {
             var posterContainer = elem.querySelector("div");
             var titleLink = elem.querySelector(".item_movies_link");
             return {
                 poster: posterContainer.attributes.src,
                 title: titleLink.text,
-                url: titleLink.attributes.href,
+                url: URL.resolve(_this.url, titleLink.attributes.href),
             };
         });
     };
