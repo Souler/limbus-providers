@@ -6000,7 +6000,7 @@ var pages_1 = __webpack_require__(/*! ./pages */ "./src/limbus-provider-solarmov
 var SolarmoviezContentProvider = (function () {
     function SolarmoviezContentProvider() {
         var _this = this;
-        this.name = "SolarmoviezContentProvider";
+        this.name = "solarmoviez.su";
         this.http = axios_1.default.create();
         this.adaptHomeMoviesToFeaturedShows = function (e) {
             return {
@@ -6177,6 +6177,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 var querystring = __webpack_require__(/*! querystring */ "./node_modules/querystring-es3/index.js");
 var URL = __webpack_require__(/*! url */ "./node_modules/url/url.js");
 var SolarmoviezVideoProvider = (function () {
@@ -6189,39 +6190,44 @@ var SolarmoviezVideoProvider = (function () {
     SolarmoviezVideoProvider.prototype.getVideoUrl = function (url, retry) {
         if (retry === void 0) { retry = 0; }
         return __awaiter(this, void 0, void 0, function () {
-            var id, sources, videoDataUrl, videoData, videoUrl, req;
+            var id, resSources, videoDataUrl, videoDataReq, videoUrl, req;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         id = querystring.parse(URL.parse(url).query).episode_id;
-                        return [4, this.request("https://solarmoviez.su/ajax/v2_get_sources?id=" + id + "&retry=" + retry, url)];
+                        return [4, axios_1.default.request({
+                                headers: { referer: url },
+                                method: "GET",
+                                params: {
+                                    id: id,
+                                    retry: retry > 0 ? retry : undefined,
+                                },
+                                url: "https://solarmoviez.su/ajax/v2_get_sources",
+                            })];
                     case 1:
-                        sources = _a.sent();
-                        videoDataUrl = URL.resolve(url, sources.value);
-                        return [4, this.request(videoDataUrl, url)];
+                        resSources = _a.sent();
+                        videoDataUrl = URL.resolve(url, resSources.data.value);
+                        return [4, axios_1.default.request({
+                                headers: { referer: url },
+                                url: videoDataUrl
+                            })];
                     case 2:
-                        videoData = _a.sent();
-                        videoUrl = videoData.playlist[0].file;
-                        return [4, fetch(videoUrl)];
+                        videoDataReq = _a.sent();
+                        videoUrl = videoDataReq.data.playlist[0].file;
+                        return [4, axios_1.default.request({
+                                method: "HEAD",
+                                validateStatus: function () { return true; },
+                                url: videoUrl,
+                            })];
                     case 3:
                         req = _a.sent();
-                        console.warn(retry, req.status);
                         if (req.status >= 400) {
                             return [2, this.getVideoUrl(url, retry + 1)];
                         }
-                        return [2, videoData.playlist[0].file];
+                        return [2, videoUrl];
                 }
             });
         });
-    };
-    SolarmoviezVideoProvider.prototype.request = function (url, playerUrl) {
-        return fetch(url + "&_=" + Date.now(), {
-            headers: {
-                accept: "application/json, text/javascript, */*; q=0.01",
-                origin: "https://solarmoviez.su",
-                referer: url,
-            },
-        }).then(function (res) { return res.json(); });
     };
     return SolarmoviezVideoProvider;
 }());

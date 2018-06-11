@@ -6002,7 +6002,7 @@ var KISSANIME_HOME_URL = "https://kissanime.ac/kissanime.html";
 var KISSANIME_SEARCH_URL = "https://kissanime.ac/AdvanceSearch";
 var KissanimeContentProvider = (function () {
     function KissanimeContentProvider() {
-        this.name = "KissanimeacContentProvider";
+        this.name = "kissanime.ac";
         this.homePage = null;
     }
     KissanimeContentProvider.prototype.getFeatured = function () {
