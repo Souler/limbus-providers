@@ -6066,9 +6066,10 @@ var SolarmoviezContentProvider = (function () {
                     case 1:
                         moviePage = _a.sent();
                         return [2, {
+                                banner: moviePage.getBannerUrl(),
                                 episodeGroups: [{ id: "all", title: "All episodes" }],
                                 id: id,
-                                poster: moviePage.getBanner(),
+                                poster: moviePage.getPosterUrl(),
                                 summary: moviePage.getSummary(),
                                 title: moviePage.getTitle(),
                                 year: moviePage.getYear(),
@@ -6096,7 +6097,7 @@ var SolarmoviezContentProvider = (function () {
                                 return {
                                     id: ep.url,
                                     summary: "",
-                                    thumbnail: moviePage.getBanner(),
+                                    thumbnail: moviePage.getBannerUrl(),
                                     title: ep.name,
                                 };
                             }))];
@@ -6329,7 +6330,7 @@ var SolarmoviezMoveInfoPage = (function () {
         var titleElem = this.document.querySelector(".mvic-desc h1");
         return titleElem.text;
     };
-    SolarmoviezMoveInfoPage.prototype.getBanner = function () {
+    SolarmoviezMoveInfoPage.prototype.getBannerUrl = function () {
         var bannerElem = this.document.querySelector(".page-cover");
         var stylesStr = bannerElem.attributes.style;
         var bgImageRgx = /background-image: url\((.*?)\)/;

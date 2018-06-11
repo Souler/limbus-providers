@@ -6058,6 +6058,7 @@ var KissanimeContentProvider = (function () {
                     case 1:
                         page = _a.sent();
                         return [2, Promise.resolve({
+                                banner: page.getPoster(),
                                 episodeGroups: this.generateEpisodeGroups(page),
                                 id: page.uri,
                                 poster: page.getPoster(),
