@@ -17,7 +17,7 @@ import {
 } from "./pages"
 
 export default class SolarmoviezContentProvider implements IContentProvider {
-  public readonly name: string = "SolarmoviezContentProvider";
+  public readonly name: string = "solarmoviez.su";
   private http = axios.create();
 
   public async getFeatured(): Promise<IFeaturedShowSection[]> {

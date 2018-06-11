@@ -21,7 +21,7 @@ const KISSANIME_HOME_URL = "https://kissanime.ac/kissanime.html";
 const KISSANIME_SEARCH_URL = "https://kissanime.ac/AdvanceSearch";
 
 export default class KissanimeContentProvider implements IContentProvider {
-  public readonly name = "KissanimeacContentProvider";
+  public readonly name = "kissanime.ac";
   private homePage: Promise<KissanimeHomePage> = null;
 
   public async getFeatured(): Promise<IFeaturedShowSection[]> {
