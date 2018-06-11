@@ -3078,7 +3078,7 @@ leb@^0.3.0:
 
 limbus-core@souler/limbus-core:
   version "0.0.1"
-  resolved "https://codeload.github.com/souler/limbus-core/tar.gz/96e09b16f04cae145dec7afeaa2e6f9e1abc869d"
+  resolved "https://codeload.github.com/souler/limbus-core/tar.gz/2efbe90b752afc666697b6ca7b954d3bd64aa4e8"
 
 listr-silent-renderer@^1.1.1:
   version "1.1.1"

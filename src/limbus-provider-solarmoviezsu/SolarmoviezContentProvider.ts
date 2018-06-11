@@ -47,9 +47,10 @@ export default class SolarmoviezContentProvider implements IContentProvider {
   public async getShowById(id: string): Promise<IShowInformation> {
     const moviePage = await this.getMoviePage(id);
     return {
+      banner: moviePage.getBannerUrl(),
       episodeGroups: [{ id: "all", title: "All episodes" }],
       id,
-      poster: moviePage.getBanner(),
+      poster: moviePage.getPosterUrl(),
       summary: moviePage.getSummary(),
       title: moviePage.getTitle(),
       year: moviePage.getYear(),
@@ -67,7 +68,7 @@ export default class SolarmoviezContentProvider implements IContentProvider {
       return {
         id: ep.url,
         summary: "",
-        thumbnail: moviePage.getBanner(),
+        thumbnail: moviePage.getBannerUrl(),
         title: ep.name,
       };
     }));

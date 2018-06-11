@@ -55,6 +55,7 @@ export default class KissanimeContentProvider implements IContentProvider {
   public async getShowById(id: string): Promise<IShowInformation> {
     const page = await this.getSeriesPage(id);
     return Promise.resolve({
+      banner: page.getPoster(),
       episodeGroups: this.generateEpisodeGroups(page),
       id: page.uri,
       poster: page.getPoster(),

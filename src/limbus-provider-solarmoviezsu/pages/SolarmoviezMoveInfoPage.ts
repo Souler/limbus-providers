@@ -17,7 +17,7 @@ export default class SolarmoviezMoveInfoPage {
     return titleElem.text;
   }
 
-  public getBanner() {
+  public getBannerUrl() {
     const bannerElem = this.document.querySelector(".page-cover");
     const stylesStr = bannerElem.attributes.style;
     const bgImageRgx = /background-image: url\((.*?)\)/;
