@@ -1,3 +1,4 @@
+import axios from "axios";
 import { IVideoProvider } from "limbus-core";
 import * as querystring from "querystring";
 import * as URL from "url";
@@ -10,28 +11,29 @@ export default class SolarmoviezVideoProvider implements IVideoProvider {
 
   public async getVideoUrl(url: string, retry: number = 0): Promise<string> {
     const { episode_id: id } = querystring.parse(URL.parse(url).query);
-    const sources = await this.request(
-      `https://solarmoviez.su/ajax/v2_get_sources?id=${id}&retry=${retry}`,
-      url,
-    );
-    const videoDataUrl = URL.resolve(url, sources.value);
-    const videoData = await this.request(videoDataUrl, url);
-    const videoUrl = videoData.playlist[0].file;
-    const req = await fetch(videoUrl);
-    console.warn(retry, req.status);
+    const resSources = await axios.request({
+      headers: { referer: url },
+      method: "GET",
+      params: {
+        id,
+        retry: retry > 0 ? retry : undefined,
+      },
+      url: "https://solarmoviez.su/ajax/v2_get_sources",
+    });
+    const videoDataUrl = URL.resolve(url, resSources.data.value);
+    const videoDataReq = await axios.request({
+      headers: { referer: url },
+      url: videoDataUrl
+    });
+    const videoUrl = videoDataReq.data.playlist[0].file;
+    const req = await axios.request({
+      method: "HEAD",
+      validateStatus: () => true,
+      url: videoUrl,
+    });
     if (req.status >= 400) {
       return this.getVideoUrl(url, retry + 1);
     }
-    return videoData.playlist[0].file;
-  }
-
-  private request(url: string, playerUrl: string) {
-    return fetch(`${url}&_=${Date.now()}`, {
-      headers: {
-        accept: "application/json, text/javascript, */*; q=0.01",
-        origin: "https://solarmoviez.su",
-        referer: url,
-      },
-    }).then((res) => res.json());
+    return videoUrl;
   }
 }
